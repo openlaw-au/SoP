@@ -140,11 +140,12 @@ export default function UserProfilePage() {
   };
 
   // Use React Query for data fetching with caching
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, isError, error } = useQuery({
     queryKey: ['profile', profileId],
     queryFn: () => fetchProfile(profileId),
     enabled: !!profileId,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
   });
 
   // Lazy load Big Five data only if it exists
@@ -164,8 +165,22 @@ export default function UserProfilePage() {
     );
   }
 
-  if (!profile) {
-    return null;
+  if (isError || !profile) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-foreground">Profile Not Found</h1>
+          <p className="text-muted-foreground">
+            {isError
+              ? 'Unable to load this profile. Please try again later.'
+              : 'The profile you are looking for does not exist or may have been removed.'}
+          </p>
+          <Button onClick={() => router.push('/users')} variant="default">
+            Back to Directory
+          </Button>
+        </div>
+      </main>
+    );
   }
 
   return (
