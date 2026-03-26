@@ -27,8 +27,8 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Run as non-root user (UID/GID 1000 to match K8s securityContext)
-RUN addgroup --system --gid 1000 nextjs && \
-    adduser --system --uid 1000 nextjs
+RUN addgroup -g 1000 -S nextjs && \
+    adduser -u 1000 -S nextjs -G nextjs
 
 # Copy standalone server output
 COPY --from=builder /app/.next/standalone ./

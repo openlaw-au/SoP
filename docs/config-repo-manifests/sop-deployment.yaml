@@ -20,6 +20,8 @@ spec:
                 runAsUser: 1000
                 runAsGroup: 1000
                 runAsNonRoot: true
+            imagePullSecrets:
+                - name: ghcr-credentials
             containers:
                 - name: sop-prod
                   image: ghcr.io/openlaw-au/sop:0.1.0
@@ -39,6 +41,18 @@ spec:
                         value: "3000"
                       - name: ADMIN_EMAILS
                         value: "admin@openlaw.com.au"
+                  livenessProbe:
+                      httpGet:
+                          path: /
+                          port: 3000
+                      initialDelaySeconds: 15
+                      periodSeconds: 30
+                  readinessProbe:
+                      httpGet:
+                          path: /
+                          port: 3000
+                      initialDelaySeconds: 5
+                      periodSeconds: 10
                   resources:
                       requests:
                           memory: "200Mi"
