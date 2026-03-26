@@ -1,0 +1,54 @@
+# Dependencies
+node_modules
+
+# Build output
+.next
+out
+build
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment files
+.env*
+
+# Documentation and misc
+*.md
+docs/
+LICENSE
+
+# Test files
+test-*.ts
+test-*.js
+test_*.mjs
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+coverage/
+
+# Supabase local dev config
+supabase/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Diagnostic/fix documentation
+diagnose_connection.md
+CONNECTION_ISSUE_RESOLUTION.md
+DATABASE_CONNECTION_DIAGNOSTICS.md
+SUPABASE_CONNECTION_FIX.md
+README_CONNECTION_FIX.txt

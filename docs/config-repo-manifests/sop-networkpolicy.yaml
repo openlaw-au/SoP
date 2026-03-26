@@ -1,0 +1,18 @@
+# ALLOW :: * -> (Port:3000)
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+    name: allow-all-ingress-sop-prod
+    namespace: sop-prod
+spec:
+    podSelector:
+        matchLabels:
+            run: sop-prod
+    ingress:
+        - from:
+              - ipBlock:
+                    cidr: 0.0.0.0/0
+          ports:
+              - protocol: TCP
+                port: 3000
