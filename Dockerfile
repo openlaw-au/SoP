@@ -43,8 +43,10 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
+# Entrypoint builds DATABASE_URL from individual vars if needed
+COPY docker-entrypoint.sh ./
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["sh", "docker-entrypoint.sh"]
