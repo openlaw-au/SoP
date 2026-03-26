@@ -26,9 +26,10 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Run as non-root user (UID/GID 1000 to match K8s securityContext)
-RUN addgroup -g 1000 -S nextjs && \
-    adduser -u 1000 -S nextjs -G nextjs
+# Run as non-root user
+# node:20-alpine already has UID/GID 1000 for 'node' user/group
+RUN addgroup -g 1001 -S nextjs && \
+    adduser -u 1001 -S nextjs -G nextjs
 
 # Copy standalone server output
 COPY --from=builder /app/.next/standalone ./
