@@ -16,6 +16,8 @@ COPY . .
 RUN npx prisma generate
 
 # Build Next.js (standalone output)
+# Dummy DATABASE_URL needed for Prisma to pass build-time validation
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 RUN npm run build
 
 # ---- Stage 3: Production ----
