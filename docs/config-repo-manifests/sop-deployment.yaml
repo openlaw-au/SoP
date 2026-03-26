@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: sop-prod
+    annotations:
+        reloader.stakater.com/auto: "true"
+    labels:
+        run: sop-prod
+spec:
+    selector:
+        matchLabels:
+            run: sop-prod
+    template:
+        metadata:
+            labels:
+                run: sop-prod
+        spec:
+            securityContext:
+                fsGroup: 1000
+                runAsUser: 1000
+                runAsGroup: 1000
+                runAsNonRoot: true
+            containers:
+                - name: sop-prod
+                  image: ghcr.io/openlaw-au/sop:0.1.0
+                  imagePullPolicy: Always
+                  ports:
+                      - containerPort: 3000
+                  envFrom:
+                      - secretRef:
+                            name: sop-runtime-secrets
+                            optional: true
+                  env:
+                      - name: NODE_ENV
+                        value: "production"
+                      - name: HOSTNAME
+                        value: "0.0.0.0"
+                      - name: PORT
+                        value: "3000"
+                      - name: ADMIN_EMAILS
+                        value: "admin@openlaw.com.au"
+                  resources:
+                      requests:
+                          memory: "200Mi"
+                      limits:
+                          memory: "2Gi"
