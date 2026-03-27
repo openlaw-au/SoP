@@ -3,17 +3,16 @@ import { PrismaClient } from '@prisma/client';
 function buildDatabaseUrl(): string {
   if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
 
-  const user = process.env.DATABASE_USERNAME;
-  const password = process.env.DATABASE_PASSWORD;
-  const host = process.env.DATABASE_HOST;
-  const port = process.env.DATABASE_PORT || '5432';
-  const name = process.env.DATABASE_NAME;
-
-  if (user && password && host && name) {
-    return `postgresql://${user}:${encodeURIComponent(password)}@${host}:${port}/${name}?sslmode=require`;
+  const json = process.env.DATABASE_CONNECTION_DETAILS;
+  if (json) {
+    const d = JSON.parse(json);
+    const password = encodeURIComponent(d.password);
+    const port = d.port || 5432;
+    const dbname = d.dbname || 'people_project';
+    return `postgresql://${d.username}:${password}@${d.host}:${port}/${dbname}?sslmode=require`;
   }
 
-  throw new Error('DATABASE_URL or DATABASE_USERNAME/PASSWORD/HOST/NAME must be set');
+  throw new Error('DATABASE_URL or DATABASE_CONNECTION_DETAILS must be set');
 }
 
 const globalForPrisma = globalThis as unknown as {

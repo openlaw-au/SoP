@@ -1,9 +1,13 @@
 #!/bin/sh
 
-# Build DATABASE_URL from individual vars if not already set
-if [ -z "$DATABASE_URL" ] && [ -n "$DATABASE_USERNAME" ] && [ -n "$DATABASE_PASSWORD" ] && [ -n "$DATABASE_HOST" ] && [ -n "$DATABASE_NAME" ]; then
-  DATABASE_PORT="${DATABASE_PORT:-5432}"
-  export DATABASE_URL="postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?sslmode=require"
+# Build DATABASE_URL from JSON connection details if not already set
+if [ -z "$DATABASE_URL" ] && [ -n "$DATABASE_CONNECTION_DETAILS" ]; then
+  DB_HOST=$(echo "$DATABASE_CONNECTION_DETAILS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));process.stdout.write(d.host)")
+  DB_PORT=$(echo "$DATABASE_CONNECTION_DETAILS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));process.stdout.write(String(d.port||5432))")
+  DB_USER=$(echo "$DATABASE_CONNECTION_DETAILS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));process.stdout.write(d.username)")
+  DB_PASS=$(echo "$DATABASE_CONNECTION_DETAILS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));process.stdout.write(encodeURIComponent(d.password))")
+  DB_NAME=$(echo "$DATABASE_CONNECTION_DETAILS" | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));process.stdout.write(d.dbname||'people_project')")
+  export DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require"
 fi
 
 # DIRECT_URL defaults to DATABASE_URL if not set
